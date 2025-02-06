@@ -1,18 +1,22 @@
 {
-  "name": "upfirst-oauth",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc && node dist/index.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "typescript": "^5.7.3"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
-  }
+    "name": "upfirst-oauth",
+    "version": "1.0.0",
+    "description": "",
+    "exports": "./index.js",
+    "type": "module",
+    "scripts": {
+        "test": "npx tsc && node --test -r dotenv/config dist/index.test.js",
+        "start": "npx tsc && node -r dotenv/config dist/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "typescript": "^5.7.3"
+    },
+    "dependencies": {
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "jose": "^5.9.6"
+    }
 }
