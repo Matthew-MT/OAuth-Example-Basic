@@ -1,6 +1,8 @@
 /**
  * Basic Authorize and Token generation example using the OAuth documentation (https://datatracker.ietf.org/doc/html/rfc6749)
  * Author: Matthew Montoni-Tiller
+ * Notes:
+ * It's a security best practice to hide sensitive information and define configuration parameters in the project's .env file. I've added the dotenv dependency to manage it.
  */
 
 import express from "express";
