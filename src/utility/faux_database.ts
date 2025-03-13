@@ -9,4 +9,4 @@ export const requested = new Map<string, { client_id: string, redirect_uri: stri
 export const active = new Map<string, string>();
 // Refresh tokens - per section 6 (https://datatracker.ietf.org/doc/html/rfc6749#section-6),
 // there is no recommendation for the expiration period for refresh tokens, so I've enabled them to be used indefinitely for simplicity.
-export const refresh = new Set<string>();
+export const refresh = new Map<string, string>();

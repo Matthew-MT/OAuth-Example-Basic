@@ -24,6 +24,8 @@ export default async function token(req: Request, res: Response) {
         return;
     }
 
+    let code;
+
     switch (req.body.grant_type) {
         case "authorization_code": {
             if (
@@ -44,6 +46,14 @@ export default async function token(req: Request, res: Response) {
                 return;
             }
 
+            // If client sends a token request with a duplicate code,
+            // revoke that code and tokens generated with it as per section 4.1.2 (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2).
+            if (active.has(req.body.code)) {
+                active.delete(req.body.code);
+                res.status(400).send();
+                return;
+            }
+
             const found = requested.get(req.body.code);
             if (!found) {
                 res.status(400).send();
@@ -58,6 +68,8 @@ export default async function token(req: Request, res: Response) {
                 res.status(400).send();
                 return;
             }
+
+            code = req.body.code;
 
             break;
         }
@@ -80,6 +92,10 @@ export default async function token(req: Request, res: Response) {
                 return;
             }
 
+            code = refresh.get(req.body.refresh_token);
+
+            refresh.delete(req.body.refresh_token);
+
             break;
         }
         default: return;
@@ -97,9 +113,9 @@ export default async function token(req: Request, res: Response) {
     // I would normally generate this from a hash of the user's credentials and the SECRET environment variable.
     const refreshToken = crypto.randomBytes(32).toString("hex");
 
-    active.set(req.body.code, token);
+    active.set(code, token);
     // See src/faux_database.ts
-    refresh.add(refreshToken);
+    refresh.set(refreshToken, code);
 
     res
         .status(200)

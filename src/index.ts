@@ -1,3 +1,8 @@
+/**
+ * Basic Authorize and Token generation example using the OAuth documentation (https://datatracker.ietf.org/doc/html/rfc6749)
+ * Author: Matthew Montoni-Tiller
+ */
+
 import express from "express";
 import authorize from "./endpoints/authorize.js";
 import token from "./endpoints/token.js";
