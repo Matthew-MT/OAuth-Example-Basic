@@ -6,6 +6,11 @@ import { requested } from "../utility/faux_database.js";
 function getCode() {}
 
 export default function authorize(req: Request, res: Response) {
+    res
+        // Cache-Control: no-store and Pragma: no-cache are required per section 5.1 (https://datatracker.ietf.org/doc/html/rfc6749#section-5.1).
+        .setHeader("Cache-Control", "no-store")
+        .setHeader("Pragma", "no-cache");
+
     if (
         !("redirect_uri" in req.query)
         || typeof req.query.redirect_uri !== "string"
