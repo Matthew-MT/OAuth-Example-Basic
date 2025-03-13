@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import crypto from "crypto";
-import { validateUrl } from "./utility.js";
-import { requested } from "./faux_database.js";
+import { validateUrl } from "../utility/utility.js";
+import { requested } from "../utility/faux_database.js";
 
 function getCode() {}
 
@@ -41,15 +41,20 @@ export default function authorize(req: Request, res: Response) {
             res.redirect(`${req.query.redirect_uri}?error=invalid_request${state ? `&state=${state}` : ""}`);
             return;
         }
-    
-        const code = crypto.randomBytes(32).toString("base64");
-    
-        // Note: If using a database implementation, this would instead set the auto-deletion time of the record to 10 minutes from now.
-        // Instead, I've set a timeout to clear the entry after 10 minutes,
+
+        // Normally, I would probably use a hash constructed from the client_id, redirect_uri, and the SECRET environment variable.
+        // However, to remain within the project instructions, the code is just generated as a random string.
+        const code = crypto.randomBytes(32).toString("hex");
+
+        // Note: If using a database implementation, this would instead set the auto-deletion time of the database record to 10 minutes from now,
         // as recommended by section 4.1.2 (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2).
-        requested.add(code);
+        // In lieu of that, I've set a timer to delete the entry after 10 minutes.
+        requested.set(code, {
+            client_id: req.query.client_id,
+            redirect_uri: req.query.redirect_uri,
+        });
         setTimeout(() => requested.delete(code), 600000); // 600000 = 10 minutes * 60 seconds * 1000 milliseconds
-    
+
         res.redirect(`${req.query.redirect_uri}?code=${code}${state ? `&state=${state}` : ""}`);
     } catch (error) {
         // Technically, there shouldn't be anything above that throws an error.
