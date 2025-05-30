@@ -3,7 +3,11 @@ import crypto from "crypto";
 import { validateUrl } from "../utility/utility.js";
 import { requested } from "../utility/faux_database.js";
 
-function getCode() {}
+function getCode() {
+    // Normally, I would probably use a hash constructed from the client_id, redirect_uri, and the SECRET environment variable.
+    // However, to keep this to a basic example, the code is just generated as a random string.
+    return crypto.randomBytes(32).toString("hex");
+}
 
 export default function authorize(req: Request, res: Response) {
     res
@@ -47,9 +51,7 @@ export default function authorize(req: Request, res: Response) {
             return;
         }
 
-        // Normally, I would probably use a hash constructed from the client_id, redirect_uri, and the SECRET environment variable.
-        // However, to remain within the project instructions, the code is just generated as a random string.
-        const code = crypto.randomBytes(32).toString("hex");
+        const code = getCode();
 
         // Note: If using a database implementation, this would instead set the auto-deletion time of the database record to 10 minutes from now,
         // as recommended by section 4.1.2 (https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2).
