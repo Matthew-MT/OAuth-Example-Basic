@@ -1,4 +1,4 @@
-# UpFirst-OAuth
+# OAuth-Example
 
 Install dependencies with `npm install`.
 Run with `npm start`.

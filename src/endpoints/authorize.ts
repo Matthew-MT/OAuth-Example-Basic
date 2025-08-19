@@ -20,6 +20,10 @@ export default function authorize(req: Request, res: Response) {
         || typeof req.query.redirect_uri !== "string"
         || !validateUrl(req.query.redirect_uri)
         // ^ Above: Validate redirect_uri
+        || !("client_id" in req.query)
+        || typeof req.query.client_id !== "string"
+        || req.query.client_id.length === 0
+        // ^ Above: Section 2.2 (https://datatracker.ietf.org/doc/html/rfc6749#section-2.2) doesn't specify restrictions on client_id.
     ) {
         res.status(400).send();
         return;
@@ -42,10 +46,6 @@ export default function authorize(req: Request, res: Response) {
             || typeof req.query.response_type !== "string"
             || req.query.response_type !== "code"
             // ^ Above: response_type=code required
-            || !("client_id" in req.query)
-            || typeof req.query.client_id !== "string"
-            || req.query.client_id.length === 0
-            // ^ Above: Section 2.2 (https://datatracker.ietf.org/doc/html/rfc6749#section-2.2) doesn't specify restrictions on client_id.
         ) {
             res.redirect(`${req.query.redirect_uri}?error=invalid_request${state ? `&state=${state}` : ""}`);
             return;
